@@ -1,0 +1,7 @@
+hueConfig:
+    ipBridge: "192.168.x.x"
+    apiKey: "xxx"
+    room: "room name"
+hrmConfig:
+    hrmDeviceId: "XX:XX:XX:XX:XX:XX"
+    maxHr: 160
