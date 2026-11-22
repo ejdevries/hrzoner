@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-// var DefaultPorts = []int{22, 53, 80, 135, 139, 443, 445, 548, 554, 631, 8080, 8443}
+// DefaultPorts = []int{22, 53, 80, 135, 139, 443, 445, 548, 554, 631, 8080, 8443}
 var DefaultPorts = []int{80, 443, 8080, 8443}
 
 type Device struct {
@@ -91,16 +91,14 @@ func Discover(ctx context.Context, opts Options) ([]Device, error) {
 
 	var wg sync.WaitGroup
 	for i := 0; i < opts.Concurrency; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			for ip := range jobs {
 				device := probe(ctx, ip, opts.Ports, opts.Timeout)
 				if len(device.OpenPorts) > 0 {
 					results <- device
 				}
 			}
-		}()
+		})
 	}
 
 	go func() {
@@ -140,7 +138,7 @@ func ParseCIDRs(value string) ([]*net.IPNet, error) {
 	}
 
 	var cidrs []*net.IPNet
-	for _, part := range strings.Split(value, ",") {
+	for part := range strings.SplitSeq(value, ",") {
 		part = strings.TrimSpace(part)
 		if part == "" {
 			continue
@@ -167,7 +165,7 @@ func ParsePorts(value string) ([]int, error) {
 	}
 
 	var ports []int
-	for _, part := range strings.Split(value, ",") {
+	for part := range strings.SplitSeq(value, ",") {
 		part = strings.TrimSpace(part)
 		if part == "" {
 			continue
@@ -301,7 +299,10 @@ func probe(ctx context.Context, ip net.IP, ports []int, timeout time.Duration) D
 		if err != nil {
 			continue
 		}
-		conn.Close()
+		err = conn.Close()
+		if err != nil {
+			return Device{}
+		}
 		device.OpenPorts = append(device.OpenPorts, port)
 	}
 

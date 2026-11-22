@@ -24,8 +24,12 @@ type AppConfig struct {
 }
 
 func ReadConfig() AppConfig {
+	return ReadConfigPath("config/config.yaml")
+}
+
+func ReadConfigPath(path string) AppConfig {
 	appConfig := AppConfig{}
-	configFile, err := os.ReadFile("config/config.yaml")
+	configFile, err := os.ReadFile(path)
 	if err != nil {
 		log.Fatal(err)
 	}
