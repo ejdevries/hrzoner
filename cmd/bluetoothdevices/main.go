@@ -16,7 +16,7 @@ import (
 
 func main() {
 	durationFlag := flag.Duration("duration", 10*time.Second, "Bluetooth LE scan duration")
-	adapterFlag := flag.String("adapter", "", "Bluetooth adapter id, for example hci0; defaults to tinygo's default adapter")
+	adapterFlag := flag.String("adapter", "", "Bluetooth adapter ID (Linux only, for example hci0). Omit to use the default adapter.")
 	configFlag := flag.String("config", "config/config.yaml", "config file used to mark the configured HRM device")
 	jsonFlag := flag.Bool("json", false, "print full scan results as JSON")
 	flag.Parse()

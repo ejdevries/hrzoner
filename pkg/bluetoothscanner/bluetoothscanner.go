@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"sort"
-	"strings"
 	"sync"
 	"time"
 
@@ -42,9 +41,9 @@ func Scan(ctx context.Context, opts Options) ([]Device, error) {
 		return nil, errors.New("scan duration must be greater than zero")
 	}
 
-	adapter := bluetooth.DefaultAdapter
-	if strings.TrimSpace(opts.AdapterID) != "" {
-		adapter = bluetooth.NewAdapter(opts.AdapterID)
+	adapter, err := selectAdapter(opts.AdapterID)
+	if err != nil {
+		return nil, err
 	}
 
 	if err := adapter.Enable(); err != nil {
